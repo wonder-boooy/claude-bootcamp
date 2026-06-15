@@ -1,6 +1,6 @@
 {
   "name": "claude-bootcamp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Turn Claude Code's waiting spinner into a workout drill sergeant.",
   "type": "module",
   "license": "MIT",
