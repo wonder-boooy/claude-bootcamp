@@ -1,11 +1,12 @@
-import type { Lang, Mode, Scope } from "../types.js";
-import { loadVerbs } from "../core/verbs.js";
+import type { Lang, Mode, Scope, VerbSet } from "../types.js";
+import { DEFAULT_SET, loadVerbs } from "../core/verbs.js";
 import { applySpinnerVerbs, hashSpinnerVerbs, makeSpinnerVerbs, matchesManaged } from "../core/merge.js";
 import { readSettings, writeSettingsAtomic } from "../core/settings.js";
 import { writeState } from "../core/state.js";
 
 export interface InstallOptions {
   lang: Lang;
+  set?: VerbSet;
   mode: Mode;
   scope: Scope;
   settingsPath: string;
@@ -18,7 +19,8 @@ export interface InstallResult {
 }
 
 export function runInstall(opts: InstallOptions): InstallResult {
-  const verbs = loadVerbs(opts.lang);
+  const set = opts.set ?? DEFAULT_SET;
+  const verbs = loadVerbs(opts.lang, set);
   const spinnerVerbs = makeSpinnerVerbs(verbs, opts.mode);
   const hash = hashSpinnerVerbs(spinnerVerbs);
 
@@ -34,6 +36,7 @@ export function runInstall(opts: InstallOptions): InstallResult {
   writeState(opts.statePath, {
     version: "0.1.0",
     lang: opts.lang,
+    set,
     mode: opts.mode,
     scope: opts.scope,
     settingsPath: opts.settingsPath,

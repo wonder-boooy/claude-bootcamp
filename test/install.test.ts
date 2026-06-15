@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { runInstall } from "../src/commands/install.ts";
 import { readSettings } from "../src/core/settings.ts";
 import { readState } from "../src/core/state.ts";
-import { jaVerbs } from "../src/core/verbs.ts";
+import { jaVerbs, loadVerbs } from "../src/core/verbs.ts";
 
 function ctx() {
   const dir = mkdtempSync(join(tmpdir(), "cbc-"));
@@ -34,6 +34,41 @@ test("install は日本語 verbs を replace で書き、state を残す", () =>
   const state = readState(c.statePath);
   assert.equal(state?.lang, "ja");
   assert.equal(state?.settingsPath, c.settingsPath);
+});
+
+test("install は set 未指定でデフォルト（bootcamp）を入れ、state に bootcamp を残す", () => {
+  const c = ctx();
+  runInstall({ lang: "ja", mode: "replace", scope: "user", settingsPath: c.settingsPath, statePath: c.statePath });
+
+  const settings = readSettings(c.settingsPath);
+  assert.deepEqual((settings.spinnerVerbs as { verbs: string[] }).verbs, jaVerbs);
+  assert.equal(readState(c.statePath)?.set, "bootcamp");
+});
+
+test("install は指定セット（yoga）の verbs を入れ、state に set を記録", () => {
+  const c = ctx();
+  const result = runInstall({
+    lang: "ja",
+    set: "yoga",
+    mode: "replace",
+    scope: "user",
+    settingsPath: c.settingsPath,
+    statePath: c.statePath,
+  });
+
+  assert.equal(result.verbsCount, loadVerbs("ja", "yoga").length);
+  const settings = readSettings(c.settingsPath);
+  assert.deepEqual((settings.spinnerVerbs as { verbs: string[] }).verbs, loadVerbs("ja", "yoga"));
+  assert.equal(readState(c.statePath)?.set, "yoga");
+});
+
+test("install はセット違いなら冪等にならず上書きする", () => {
+  const c = ctx();
+  const base = { lang: "ja" as const, mode: "replace" as const, scope: "user" as const, ...c };
+  runInstall({ ...base, set: "bootcamp" });
+  const switched = runInstall({ ...base, set: "hiit" });
+  assert.equal(switched.changed, true);
+  assert.equal(readState(c.statePath)?.set, "hiit");
 });
 
 test("install は既存の他キーを保持", () => {
