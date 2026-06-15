@@ -5,7 +5,7 @@
   "type": "module",
   "license": "MIT",
   "bin": {
-    "claude-bootcamp": "./dist/cli.js"
+    "claude-bootcamp": "dist/cli.js"
   },
   "files": [
     "dist",
