@@ -26,6 +26,7 @@ export const SETS: SetInfo[] = [
   { key: "hiit", label: "HIIT" },
   { key: "yoga", label: "ヨガ" },
   { key: "stiff", label: "肩こり防止" },
+  { key: "hulk", label: "HULK" },
 ];
 
 export const DEFAULT_SET: VerbSet = "bootcamp";

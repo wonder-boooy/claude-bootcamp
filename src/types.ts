@@ -1,7 +1,7 @@
 export type Lang = "ja" | "en" | "both";
 export type Mode = "replace" | "append";
 export type Scope = "user" | "project";
-export type VerbSet = "bootcamp" | "hiit" | "yoga" | "stiff";
+export type VerbSet = "bootcamp" | "hiit" | "yoga" | "stiff" | "hulk";
 
 export interface SpinnerVerbs {
   mode: Mode;
