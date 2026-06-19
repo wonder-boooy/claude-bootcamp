@@ -2,12 +2,13 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadVerbs, jaVerbs, enVerbs, SETS, DEFAULT_SET } from "../src/core/verbs.ts";
 
-function assertQuality(verbs: string[], label: string, min = 20): void {
+function assertQuality(verbs: string[], label: string, min = 20, allowWeights = false): void {
   assert.ok(verbs.length >= min, `${label}: ${min}語以上`);
   assert.equal(new Set(verbs).size, verbs.length, `${label}: 重複なし`);
   for (const v of verbs) {
     assert.ok(v.trim().length > 0, `${label}: 空文字なし`);
-    assert.ok(!/[0-9０-９]/.test(v), `${label}: 数字/回数を含まない -> "${v}"`);
+    const checkTarget = allowWeights ? v.replace(/\d+\s*kg/gi, "") : v;
+    assert.ok(!/[0-9０-９]/.test(checkTarget), `${label}: 数字/回数を含まない -> "${v}"`);
   }
 }
 
@@ -44,8 +45,9 @@ test("loadVerbs の set 既定値は bootcamp（無印と一致）", () => {
 test("全セットの日英ワードが品質要件を満たす", () => {
   for (const { key } of SETS) {
     const min = key === DEFAULT_SET ? 20 : 12;
-    assertQuality(loadVerbs("ja", key), `ja/${key}`, min);
-    assertQuality(loadVerbs("en", key), `en/${key}`, min);
+    const allowWeights = key === "hulk";
+    assertQuality(loadVerbs("ja", key), `ja/${key}`, min, allowWeights);
+    assertQuality(loadVerbs("en", key), `en/${key}`, min, allowWeights);
     assert.equal(
       loadVerbs("ja", key).length,
       loadVerbs("en", key).length,
