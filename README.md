@@ -1,75 +1,77 @@
 # claude-bootcamp 💪
 
-Claude Code のレスポンス待ちスピナーを、運動を鼓舞するブートキャンプ調のワードに差し替えます。PC に向かう待ち時間を、軽い運動のきっかけに。
+**English** | [日本語](./README.ja.md)
+
+Replace Claude Code's "waiting for response" spinner words with bootcamp-style workout cues. Turn the time you spend waiting at your desk into a nudge for some light exercise.
 
 ```text
-スクワットしろ…
-肩を回せ…
-その場で足踏みしろ…
+Do squats…
+Roll your shoulders…
+March in place…
 ```
 
-ワードは**セット**で切り替えられます。気分や体調に合わせてどうぞ。
+The words come in **sets** you can switch between — pick one that matches your mood or condition.
 
-| セット | 雰囲気 | 例 |
+| Set | Vibe | Examples |
 |---|---|---|
-| `bootcamp`（デフォルト） | ブートキャンプ調の運動命令 | スクワットしろ／肩を回せ |
-| `hiit` | 高強度・その場で全力 | しゃがんで跳び上がれ／腿を高く上げて走れ |
-| `yoga` | 呼吸とポーズでゆっくり | 猫のように背中を丸めろ／深く息を吸い込め |
-| `stiff` | 肩こり防止・デスクワーク向け | 肩を後ろに大きく回せ／画面から目を離して遠くを見ろ |
-| `hulk` | ジムでないと無理な本格筋トレ | ベンチで100kgを押し上げろ／タイヤをひっくり返せ |
+| `bootcamp` (default) | Drill-sergeant workout commands | Do squats / Roll your shoulders |
+| `hiit` | High-intensity, all-out in place | Drop down and jump up / Run with high knees |
+| `yoga` | Slow, breath-and-pose focused | Round your back like a cat / Breathe in deeply |
+| `stiff` | Anti-stiffness, made for desk work | Roll your shoulders back wide / Look away from the screen into the distance |
+| `hulk` | Serious lifting you can only do at the gym | Bench press 100 kg / Flip the tire |
 
-## 使い方
+## Usage
 
 ```bash
-# インストール（対話で「言語」と「セット」を選択）
+# Install (interactively pick "language" and "set")
 npx claude-bootcamp install
 
-# 非対話（セットも指定可能）
-npx claude-bootcamp install --lang ja --set yoga --mode replace --yes
+# Non-interactive (you can specify the set too)
+npx claude-bootcamp install --lang en --set yoga --mode replace --yes
 
-# 元に戻す
+# Revert
 npx claude-bootcamp uninstall
 
-# ワード一覧／プレビュー（セット指定で導入前に確認できる）
-npx claude-bootcamp list --lang ja --set hiit
+# List / preview words (check a set before installing it)
+npx claude-bootcamp list --lang en --set hiit
 npx claude-bootcamp preview --set stiff
 ```
 
-`install` の対話は**ウィザード形式**です。1 画面に 1 ステップずつ（言語 → セット）表示し、`↑↓`（`j`/`k`・数字キーでも可）でカーソル（`*`）を動かして `Enter` で次へ進みます。`←`（または `Backspace`）で前のステップに戻って選び直せます。
+The `install` prompt is a **wizard**: it shows one step per screen (language → set). Move the cursor (`*`) with `↑↓` (`j`/`k` and number keys also work) and press `Enter` to go to the next step. Press `←` (or `Backspace`) to go back to the previous step and re-choose.
 
 ```text
-[2/2] セットを選んでください（↑↓ 移動 / ← 戻る / Enter 決定）
-* ブートキャンプ
+[2/2] Choose a set (↑↓ move / ← back / Enter confirm)
+* Bootcamp
   HIIT
-  ヨガ
-  肩こり防止
+  Yoga
+  Anti-stiffness
   HULK
 ```
 
-ターミナル以外（CI・パイプ）では自動的に番号入力にフォールバックします。インストール後、Claude Code を再起動すると反映されます。
+Outside a terminal (CI, pipes) it automatically falls back to numbered input. After installing, restart Claude Code to apply the change.
 
-## オプション
+## Options
 
-| オプション | 値 | デフォルト |
+| Option | Values | Default |
 |---|---|---|
-| `--lang` | `ja` / `en` / `both` | 対話で質問 |
-| `--set` | `bootcamp` / `hiit` / `yoga` / `stiff` / `hulk` | 対話で質問（`bootcamp`） |
-| `--mode` | `replace`（置換）/ `append`（追加） | `replace` |
-| `--scope` | `user`（`~/.claude`）/ `project`（`./.claude`） | `user` |
-| `--yes` | 確認スキップ | false |
+| `--lang` | `ja` / `en` / `both` | Auto-detected from your environment locale (`ja` if it starts with `ja*`, otherwise `en`). In the `install` wizard, the detected value is the initial selection |
+| `--set` | `bootcamp` / `hiit` / `yoga` / `stiff` / `hulk` | Asked interactively (`bootcamp`) |
+| `--mode` | `replace` / `append` | `replace` |
+| `--scope` | `user` (`~/.claude`) / `project` (`./.claude`) | `user` |
+| `--yes` | Skip confirmation | false |
 
-## 仕組み
+## How it works
 
-Claude Code の [`spinnerVerbs`](https://docs.claude.com/en/docs/claude-code/settings) 設定を `settings.json` にマージします。既存設定はバックアップ（`settings.json.bak-*`）した上でアトミックに書き込み、`~/.claude/.claude-bootcamp.json` に状態を記録します。`uninstall` は当ツールが入れた値のみを除去し、手動で変更されている場合は安全のため何もしません。
+It merges Claude Code's [`spinnerVerbs`](https://docs.claude.com/en/docs/claude-code/settings) setting into your `settings.json`. Existing settings are backed up (`settings.json.bak-*`) and written atomically, and the state is recorded in `~/.claude/.claude-bootcamp.json`. `uninstall` removes only the values this tool added, and does nothing if they have been changed by hand — for safety.
 
-## コントリビュート
+## Contributing
 
-ワードの追加・翻訳は `data/verbs.*.json` への PR を歓迎します（回数・数字は入れない方針です）。
+PRs that add or translate words in `data/verbs.*.json` are welcome (the policy is no rep counts or numbers).
 
-- `bootcamp`（デフォルト）: `data/verbs.ja.json` / `data/verbs.en.json`
-- その他のセット: `data/verbs.<lang>.<set>.json`（例: `data/verbs.ja.yoga.json`）
+- `bootcamp` (default): `data/verbs.ja.json` / `data/verbs.en.json`
+- Other sets: `data/verbs.<lang>.<set>.json` (e.g. `data/verbs.ja.yoga.json`)
 
-新しいセットを足す場合は、日英 2 ファイルを用意し、`src/core/verbs.ts` の `SETS` と `src/types.ts` の `VerbSet` に追記してください。基本方針は「読んだ瞬間に何をすべきか分かる、回数なしの具体的な動作」です。`hulk` のみ重量（kg）の具体的な数字を入れる例外とします。
+To add a new set, provide both the Japanese and English files, and add the set to `SETS` in `src/core/verbs.ts` and to `VerbSet` in `src/types.ts`. The guiding principle is "a concrete action you understand the moment you read it, with no rep counts." `hulk` is the only exception, where specific weights (kg) are allowed.
 
 ## License
 

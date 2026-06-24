@@ -6,6 +6,7 @@ import { runPreview } from "./commands/preview.js";
 import { runUninstall } from "./commands/uninstall.js";
 import { settingsPath, statePath } from "./core/paths.js";
 import { DEFAULT_SET, SETS } from "./core/verbs.js";
+import { detectDefaultLang } from "./core/locale.js";
 import { runWizard, type WizardStep } from "./prompt.js";
 
 const LANGS: { value: Lang; label: string }[] = [
@@ -38,15 +39,17 @@ function parseFlags(argv: string[]): Flags {
 async function main(): Promise<void> {
   const [command, ...rest] = process.argv.slice(2);
   const flags = parseFlags(rest);
+  // 環境ロケールから既定言語を一度だけ判定し、全コマンドで共通利用する（ja* なら ja、それ以外は en）。
+  const defaultLang = detectDefaultLang();
 
   switch (command) {
     case "install": {
-      let lang: Lang = flags.lang ?? "ja";
+      let lang: Lang = flags.lang ?? defaultLang;
       let set: VerbSet = flags.set ?? DEFAULT_SET;
       if (!flags.yes) {
         // 未指定のものだけをウィザードのステップにする（戻る操作で選び直せる）。
         const steps: WizardStep[] = [];
-        if (flags.lang === undefined) steps.push({ question: "言語を選んでください", options: LANGS, initial: "ja" });
+        if (flags.lang === undefined) steps.push({ question: "言語を選んでください", options: LANGS, initial: defaultLang });
         if (flags.set === undefined) {
           steps.push({
             question: "セットを選んでください",
@@ -83,10 +86,10 @@ async function main(): Promise<void> {
       break;
     }
     case "list":
-      runList(flags.lang ?? "both", undefined, flags.set ?? DEFAULT_SET);
+      runList(flags.lang ?? defaultLang, undefined, flags.set ?? DEFAULT_SET);
       break;
     case "preview":
-      await runPreview(flags.lang ?? "ja", undefined, undefined, flags.set ?? DEFAULT_SET);
+      await runPreview(flags.lang ?? defaultLang, undefined, undefined, flags.set ?? DEFAULT_SET);
       break;
     default: {
       const sets = SETS.map((s) => s.key).join("|");
@@ -97,6 +100,8 @@ async function main(): Promise<void> {
   npx claude-bootcamp uninstall [--scope user|project]
   npx claude-bootcamp list [--lang ja|en|both] [--set ${sets}]
   npx claude-bootcamp preview [--lang ja|en|both] [--set ${sets}]
+
+--lang 省略時は環境ロケールから自動判定します（ja* なら ja、それ以外は en）。
 
 セット（--set）:
 ${SETS.map((s) => `  ${s.key === DEFAULT_SET ? "*" : " "} ${s.key} — ${s.label}`).join("\n")}`);
