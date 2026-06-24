@@ -1,6 +1,6 @@
 # claude-bootcamp 💪
 
-[English](./README.md) | **日本語**
+[English](https://github.com/wonder-boooy/claude-bootcamp/blob/main/README.md) | **日本語**
 
 Claude Code のレスポンス待ちスピナーを、運動を鼓舞するブートキャンプ調のワードに差し替えます。PC に向かう待ち時間を、軽い運動のきっかけに。
 

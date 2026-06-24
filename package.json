@@ -1,9 +1,17 @@
 {
   "name": "claude-bootcamp",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Turn Claude Code's waiting spinner into a workout drill sergeant.",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wonder-boooy/claude-bootcamp.git"
+  },
+  "homepage": "https://github.com/wonder-boooy/claude-bootcamp#readme",
+  "bugs": {
+    "url": "https://github.com/wonder-boooy/claude-bootcamp/issues"
+  },
   "bin": {
     "claude-bootcamp": "dist/cli.js"
   },

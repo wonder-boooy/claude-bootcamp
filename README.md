@@ -1,6 +1,6 @@
 # claude-bootcamp 💪
 
-**English** | [日本語](./README.ja.md)
+**English** | [日本語](https://github.com/wonder-boooy/claude-bootcamp/blob/main/README.ja.md)
 
 Replace Claude Code's "waiting for response" spinner words with bootcamp-style workout cues. Turn the time you spend waiting at your desk into a nudge for some light exercise.
 
